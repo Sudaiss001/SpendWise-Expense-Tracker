@@ -16,19 +16,19 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 const CATEGORY_NAMES = Object.keys(CATEGORY_COLORS)
 
-async function ensureDemoUser(userId: string) {
-  if (userId !== 'user_1') return
-
-  await prisma.user.upsert({
-    where: { id: userId },
-    update: {},
-    create: {
-      id: userId,
-      email: 'demo@spendwise.local',
-      password: 'demo-password',
-      businessName: 'Demo Business',
-    },
-  })
+async function ensureUserExists(userId: string) {
+  const existingUser = await prisma.user.findUnique({ where: { id: userId } })
+  if (!existingUser) {
+    await prisma.user.create({
+      data: {
+        id: userId,
+        name: 'Demo User',
+        email: `${userId}@spendwise.local`,
+        password: 'demo-password',
+        businessName: 'Demo Business',
+      },
+    })
+  }
 }
 
 function optionalString(value: unknown): string | null {
@@ -107,7 +107,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing required expense fields' }, { status: 400 })
     }
 
-    await ensureDemoUser(userId)
+    await ensureUserExists(userId)
 
     const resolvedCategoryId = await resolveCategoryId(categoryId, category, userId)
 

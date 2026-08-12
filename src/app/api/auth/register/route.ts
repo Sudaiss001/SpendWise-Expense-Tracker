@@ -1,29 +1,84 @@
 import { NextResponse } from 'next/server'
+import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
+import { setAuthCookie } from '@/lib/jwt'
+
+const DEFAULT_CATEGORIES = [
+  { name: 'Inventory', color: '#14B8A6' },
+  { name: 'Logistics', color: '#F59E0B' },
+  { name: 'Utilities', color: '#3B82F6' },
+  { name: 'Salaries', color: '#10B981' },
+  { name: 'Marketing', color: '#F43F5E' },
+  { name: 'Rent', color: '#EC4899' },
+  { name: 'Equipment', color: '#6366F1' },
+  { name: 'Software', color: '#8B5CF6' },
+  { name: 'Taxes', color: '#EF4444' },
+  { name: 'Misc', color: '#9CA3AF' },
+]
 
 export async function POST(req: Request) {
   try {
-    const { email, password, businessName } = await req.json()
+    const { name, email, password, businessName } = await req.json()
 
-    if (!email || !password || !businessName) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    if (!name || !email || !password) {
+      return NextResponse.json(
+        { error: 'Name, email, and password are required' },
+        { status: 400 }
+      )
     }
 
-    const existingUser = await prisma.user.findUnique({ where: { email } })
+    const normalizedEmail = email.trim().toLowerCase()
+
+    const existingUser = await prisma.user.findUnique({
+      where: { email: normalizedEmail },
+    })
+
     if (existingUser) {
-      return NextResponse.json({ error: 'User already exists' }, { status: 400 })
+      return NextResponse.json(
+        { error: 'User with this email already exists' },
+        { status: 400 }
+      )
     }
+
+    const hashedPassword = await bcrypt.hash(password, 10)
 
     const user = await prisma.user.create({
       data: {
-        email,
-        password,
-        businessName,
+        name,
+        email: normalizedEmail,
+        password: hashedPassword,
+        businessName: businessName || null,
       },
     })
 
-    return NextResponse.json({ message: 'User registered successfully', user }, { status: 201 })
+    // AUTO-SEED default categories for this new user
+    await prisma.category.createMany({
+      data: DEFAULT_CATEGORIES.map((cat) => ({
+        name: cat.name,
+        color: cat.color,
+        userId: user.id,
+      })),
+    })
+
+    // Set secure HTTP-only auth cookie
+    await setAuthCookie({ userId: user.id, email: user.email })
+
+    return NextResponse.json(
+      {
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          businessName: user.businessName,
+        },
+      },
+      { status: 201 }
+    )
   } catch (error) {
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    console.error('Registration error:', error)
+    return NextResponse.json(
+      { error: 'Failed to register user' },
+      { status: 500 }
+    )
   }
 }

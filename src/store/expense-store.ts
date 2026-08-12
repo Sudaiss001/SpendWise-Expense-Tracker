@@ -305,7 +305,7 @@ export const useExpenseStore = create<ExpenseStore>((set, get) => ({
         title: data.title || data.vendor,
         notes: data.notes || data.description,
       },
-      { userId: data.userId || 'user_1' }
+      { userId: data.userId }
     )
 
     try {
@@ -319,7 +319,7 @@ export const useExpenseStore = create<ExpenseStore>((set, get) => ({
           date: data.date,
           category: data.category,
           categoryId: data.categoryId ?? null,
-          userId: data.userId || 'user_1',
+          userId: data.userId,
           notes: data.notes || data.description,
         }),
       })

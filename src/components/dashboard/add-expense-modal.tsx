@@ -6,9 +6,9 @@ import { X, CalendarDays, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useExpenseStore, ALL_CATEGORIES, type PaymentMethod } from '@/store/expense-store';
+import { useAuthStore } from '@/store/auth-store';
 
 const CATEGORIES = ALL_CATEGORIES;
-const USER_ID = 'user_1';
 const DEFAULT_CATEGORY = 'Inventory';
 
 type CategoryOption = {
@@ -33,6 +33,8 @@ interface AddExpenseModalProps {
 export default function AddExpenseModal({ isOpen, onClose }: AddExpenseModalProps) {
   const addExpense = useExpenseStore((s) => s.addExpense);
   const fetchExpenses = useExpenseStore((s) => s.fetchExpenses);
+  const user = useAuthStore((s) => s.user);
+  const activeUserId = user?.id || 'user_1';
 
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [title, setTitle] = useState('');
@@ -58,7 +60,7 @@ export default function AddExpenseModal({ isOpen, onClose }: AddExpenseModalProp
 
     async function loadCategories() {
       try {
-        const res = await fetch(`/api/categories?userId=${encodeURIComponent(USER_ID)}`);
+        const res = await fetch(`/api/categories?userId=${encodeURIComponent(activeUserId)}`);
 
         if (!res.ok) {
           throw new Error(`Failed to load categories (${res.status} ${res.statusText})`);
@@ -73,22 +75,30 @@ export default function AddExpenseModal({ isOpen, onClose }: AddExpenseModalProp
             )
           : [];
 
-        if (isCancelled || fetchedCategories.length === 0) return;
+        if (isCancelled) return;
 
-        setCategories(fetchedCategories);
-        setSelectedCategoryId((currentCategoryId) => {
-          if (fetchedCategories.some((cat) => cat.id === currentCategoryId)) {
-            return currentCategoryId;
-          }
+        if (fetchedCategories.length > 0) {
+          setCategories(fetchedCategories);
+          setSelectedCategoryId((currentCategoryId) => {
+            if (fetchedCategories.some((cat) => cat.id === currentCategoryId)) {
+              return currentCategoryId;
+            }
 
-          const categoryWithCurrentName = fetchedCategories.find(
-            (cat) => cat.name === currentCategoryId
-          );
+            const categoryWithCurrentName = fetchedCategories.find(
+              (cat) => cat.name === currentCategoryId
+            );
 
-          return categoryWithCurrentName?.id || getDefaultCategoryId(fetchedCategories);
-        });
+            return categoryWithCurrentName?.id || getDefaultCategoryId(fetchedCategories);
+          });
+        } else {
+          setCategories(FALLBACK_CATEGORY_OPTIONS);
+          setSelectedCategoryId((current) => current || getDefaultCategoryId(FALLBACK_CATEGORY_OPTIONS));
+        }
       } catch (error) {
         console.error('Failed to load expense categories:', error);
+        if (!isCancelled) {
+          setCategories(FALLBACK_CATEGORY_OPTIONS);
+        }
       }
     }
 
@@ -97,7 +107,7 @@ export default function AddExpenseModal({ isOpen, onClose }: AddExpenseModalProp
     return () => {
       isCancelled = true;
     };
-  }, [isOpen]);
+  }, [isOpen, activeUserId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,9 +122,11 @@ export default function AddExpenseModal({ isOpen, onClose }: AddExpenseModalProp
         paymentMethod,
         date: new Date().toISOString(),
         notes,
-        userId: 'user_1',
+        categoryId: selectedCategoryId,
+        category: selectedCategory?.name || selectedCategoryId,
+        userId: activeUserId,
       });
-      await fetchExpenses('user_1');
+      await fetchExpenses(activeUserId);
 
       setDate(new Date().toISOString().split('T')[0]);
       setTitle('');

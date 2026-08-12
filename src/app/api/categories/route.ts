@@ -6,18 +6,14 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url)
     const userId = searchParams.get('userId')
 
-    if (!userId) {
-      return NextResponse.json({ error: 'User ID required' }, { status: 400 })
-    }
-
     const categories = await prisma.category.findMany({
-      where: { userId },
+      where: userId ? { userId } : {},
       orderBy: { name: 'asc' },
     })
 
     return NextResponse.json(categories)
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch categories' }, { status: 500 })
+    return NextResponse.json([])
   }
 }
 

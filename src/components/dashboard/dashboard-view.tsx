@@ -7,15 +7,27 @@ import MetricCards from './metric-cards';
 import DashboardCharts from './dashboard-charts';
 import ExpenseTable from './expense-table';
 import AddExpenseModal from './add-expense-modal';
+import { useAuthStore } from '@/store/auth-store';
 import { useExpenseStore } from '@/store/expense-store';
 
 export default function DashboardView() {
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
   const fetchExpenses = useExpenseStore((state) => state.fetchExpenses);
+  const user = useAuthStore((state) => state.user);
+  const checkAuth = useAuthStore((state) => state.checkAuth);
 
   useEffect(() => {
-    fetchExpenses('user_1');
-  }, [fetchExpenses]);
+    async function init() {
+      let activeUser = user;
+      if (!activeUser) {
+        activeUser = await checkAuth();
+      }
+      if (activeUser?.id) {
+        fetchExpenses(activeUser.id);
+      }
+    }
+    init();
+  }, [user, checkAuth, fetchExpenses]);
 
   return (
     <div className="min-h-screen flex flex-col animated-gradient">

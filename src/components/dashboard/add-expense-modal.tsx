@@ -114,7 +114,7 @@ export default function AddExpenseModal({ isOpen, onClose }: AddExpenseModalProp
         notes,
         userId: 'user_1',
       });
-      await fetchExpenses(USER_ID);
+      await fetchExpenses('user_1');
 
       setDate(new Date().toISOString().split('T')[0]);
       setTitle('');

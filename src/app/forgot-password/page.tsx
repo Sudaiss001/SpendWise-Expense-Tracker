@@ -51,13 +51,25 @@ export default function ForgotPasswordPage() {
     e.preventDefault();
     setError('');
     setMessage('');
+
+    const cleanOtp = token.trim();
+    if (!/^\d{6}$/.test(cleanOtp)) {
+      setError('Please enter a valid 6-digit numeric OTP code');
+      return;
+    }
+
+    if (!newPassword || newPassword.length < 6) {
+      setError('Password must be at least 6 characters long');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
       const res = await fetch('/api/auth/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, newPassword }),
+        body: JSON.stringify({ token: cleanOtp, newPassword }),
       });
 
       const data = await res.json();
@@ -142,25 +154,29 @@ export default function ForgotPasswordPage() {
                 disabled={isLoading}
                 className="w-full bg-violet hover:bg-violet/90 text-white font-semibold h-12 glow-violet transition-all duration-300 hover:scale-[1.02]"
               >
-                {isLoading ? 'Generating Token...' : 'Send Reset Request'}
+                {isLoading ? 'Sending OTP Code...' : 'Send OTP Code'}
               </Button>
             </form>
           ) : (
             <form onSubmit={handleResetPassword} className="space-y-5">
               <div className="space-y-2">
                 <Label htmlFor="token" className="text-muted-foreground">
-                  Reset Token
+                  6-Digit OTP Code
                 </Label>
                 <div className="relative">
                   <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
                     id="token"
                     type="text"
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                    pattern="[0-9]*"
+                    maxLength={6}
                     required
-                    placeholder="Paste reset token"
+                    placeholder="123456"
                     value={token}
-                    onChange={(e) => setToken(e.target.value)}
-                    className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-muted-foreground/50 focus:border-violet/50 focus:ring-violet/20 h-12"
+                    onChange={(e) => setToken(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-muted-foreground/30 focus:border-violet/50 focus:ring-violet/20 h-12 tracking-[0.5em] text-center text-lg font-mono font-bold"
                   />
                 </div>
               </div>
@@ -174,6 +190,7 @@ export default function ForgotPasswordPage() {
                   <Input
                     id="newPassword"
                     type="password"
+                    autoComplete="new-password"
                     required
                     placeholder="Enter your new password"
                     value={newPassword}

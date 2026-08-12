@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="SpendWise logo">
+  <defs>
+    <linearGradient id="spendwise-gradient" x1="10" y1="8" x2="54" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#8B5CF6" />
+      <stop offset="1" stop-color="#34D399" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#spendwise-gradient)" />
+  <g
+    fill="none"
+    stroke="#FFFFFF"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="4"
+    transform="translate(8 8) scale(2)"
+  >
+    <path d="M9 6h6" />
+    <path d="M9 12h6" />
+    <path d="M9 18h6" />
+    <path d="M6 6v12" />
+    <path d="M18 6v12" />
+  </g>
+</svg>

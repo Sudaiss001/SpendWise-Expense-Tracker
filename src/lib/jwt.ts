@@ -42,6 +42,7 @@ export async function removeAuthCookie() {
     sameSite: 'lax',
     path: '/',
     maxAge: 0,
+    expires: new Date(0),
   })
 }
 

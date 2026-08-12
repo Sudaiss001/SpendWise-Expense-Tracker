@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/auth-store';
 import { useExpenseStore } from '@/store/expense-store';
 
@@ -19,10 +20,21 @@ interface TopBarProps {
 }
 
 export default function TopBar({ onAddExpense }: TopBarProps) {
+  const router = useRouter();
   const { user, logout } = useAuthStore();
   const exportCSV = useExpenseStore((s) => s.exportCSV);
   const exportPDFData = useExpenseStore((s) => s.exportPDFData);
   const [showExportMenu, setShowExportMenu] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Failed to log out:', error);
+    } finally {
+      router.push('/login');
+    }
+  };
 
   const handleExportCSV = () => {
     const csvContent = exportCSV();
@@ -204,7 +216,7 @@ export default function TopBar({ onAddExpense }: TopBarProps) {
                 </div>
                 <DropdownMenuSeparator className="bg-white/10" />
                 <DropdownMenuItem
-                  onClick={logout}
+                  onClick={handleLogout}
                   className="text-crimson focus:text-crimson focus:bg-crimson/10 cursor-pointer"
                 >
                   <LogOut className="w-4 h-4 mr-2" />

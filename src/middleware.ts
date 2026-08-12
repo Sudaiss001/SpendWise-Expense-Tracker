@@ -3,26 +3,26 @@ import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
-  const authToken = request.cookies.get('auth_token')?.value
+  const authToken = request.cookies.get('auth_token')?.value || request.cookies.get('token')?.value
 
-  const isAuthPage = pathname.startsWith('/login') || pathname.startsWith('/signup') || pathname.startsWith('/forgot-password')
+  const isAuthPage = pathname.startsWith('/login') || pathname.startsWith('/signup')
   const isProtectedPage = pathname === '/' || pathname.startsWith('/dashboard')
 
-  // If user is trying to access protected page without token
+  // Redirect unauthenticated users trying to visit protected pages to /login
   if (isProtectedPage && !authToken) {
     const loginUrl = new URL('/login', request.url)
     return NextResponse.redirect(loginUrl)
   }
 
-  // If user is already authenticated and visits login/signup
-  if (isAuthPage && authToken && !pathname.startsWith('/forgot-password')) {
-    const dashboardUrl = new URL('/', request.url)
-    return NextResponse.redirect(dashboardUrl)
+  // Redirect logged-in users visiting /login or /signup straight to /
+  if (isAuthPage && authToken) {
+    const homeUrl = new URL('/', request.url)
+    return NextResponse.redirect(homeUrl)
   }
 
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: ['/', '/dashboard/:path*', '/login', '/signup', '/forgot-password'],
+  matcher: ['/', '/dashboard/:path*', '/login', '/signup'],
 }

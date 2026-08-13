@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Eye, EyeOff, Mail, Lock, User, Building2, Banknote } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -226,12 +227,12 @@ export default function AuthPage() {
                         Remember me
                       </Label>
                     </div>
-                    <a
-                      href="#"
-                      className="text-sm text-violet hover:text-violet/80 transition-colors"
+                    <Link
+                      href="/forgot-password"
+                      className="text-sm font-medium text-purple-400 hover:text-purple-300 transition-colors"
                     >
                       Forgot password?
-                    </a>
+                    </Link>
                   </div>
 
                   <Button

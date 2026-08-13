@@ -89,14 +89,12 @@ export default function ForgotPasswordPage() {
     <div className="min-h-screen flex items-center justify-center p-6 bg-background">
       <div className="w-full max-w-md">
         <div className="mb-6">
-          <Link href="/login">
-            <Button
-              variant="ghost"
-              className="text-muted-foreground hover:text-white hover:bg-white/5"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Login
-            </Button>
+          <Link
+            href="/login"
+            className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Login
           </Link>
         </div>
 

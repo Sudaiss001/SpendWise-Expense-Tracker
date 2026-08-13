@@ -47,14 +47,12 @@ export default function SignupPage() {
 
         <div className="relative z-10 flex flex-col justify-between w-full p-12">
           <div>
-            <Link href="/">
-              <Button
-                variant="ghost"
-                className="text-white/60 hover:text-white hover:bg-white/10"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Home
-              </Button>
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Home
             </Link>
           </div>
 
@@ -89,14 +87,12 @@ export default function SignupPage() {
       <div className="flex-1 flex items-center justify-center p-6 sm:p-8 lg:p-12">
         <div className="w-full max-w-md">
           <div className="lg:hidden mb-6">
-            <Link href="/">
-              <Button
-                variant="ghost"
-                className="text-muted-foreground hover:text-white hover:bg-white/5"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back
-              </Button>
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Home
             </Link>
           </div>
 

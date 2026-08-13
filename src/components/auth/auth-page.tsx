@@ -76,14 +76,14 @@ export default function AuthPage() {
 
         <div className="relative z-10 flex flex-col justify-between w-full p-12">
           <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              className="text-white/60 hover:text-white hover:bg-white/10"
+            <Link
+              href="/"
               onClick={() => setView('landing')}
+              className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors"
             >
-              <ArrowLeft className="w-4 h-4 mr-2" />
+              <ArrowLeft className="w-4 h-4" />
               Back to Home
-            </Button>
+            </Link>
           </div>
 
           <div className="max-w-md">
@@ -137,14 +137,14 @@ export default function AuthPage() {
         <div className="w-full max-w-md">
           {/* Mobile back button */}
           <div className="lg:hidden mb-6">
-            <Button
-              variant="ghost"
-              className="text-muted-foreground hover:text-white hover:bg-white/5"
+            <Link
+              href="/"
               onClick={() => setView('landing')}
+              className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors"
             >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
+              <ArrowLeft className="w-4 h-4" />
+              Back to Home
+            </Link>
           </div>
 
           {/* Mobile logo */}

@@ -32,6 +32,15 @@ model PasswordReset {
   createdAt DateTime @default(now())
 }
 
+model ContactMessage {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  subject   String?
+  message   String   @db.Text
+  createdAt DateTime @default(now())
+}
+
 model Category {
   id        String    @id @default(uuid())
   name      String

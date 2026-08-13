@@ -135,16 +135,23 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   logout: async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' });
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
     } catch (e) {
       console.error('Logout error:', e);
     }
     set({
       isAuthenticated: false,
       user: null,
-      currentView: 'landing',
+      currentView: 'auth',
       authMode: 'login',
     });
+
+    if (typeof window !== 'undefined') {
+      window.location.href = new URL('/login', window.location.origin).href;
+    }
   },
 
   setView: (view: AppView) => {

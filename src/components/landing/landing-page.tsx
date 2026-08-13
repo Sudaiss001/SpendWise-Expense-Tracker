@@ -12,6 +12,7 @@ import {
 import { NairaIcon } from '@/components/naira-icon';
 import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/store/auth-store';
+import Contact from './contact';
 
 const smoothEase: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -360,6 +361,8 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <Contact />
+
       {/* Footer */}
       <footer className="glass-subtle mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -374,7 +377,7 @@ export default function LandingPage() {
               <a href="#" className="hover:text-white transition-colors">Privacy</a>
               <a href="#" className="hover:text-white transition-colors">Terms</a>
               <a href="#" className="hover:text-white transition-colors">Support</a>
-              <a href="#" className="hover:text-white transition-colors">Contact</a>
+              <a href="#contact" className="hover:text-white transition-colors">Contact</a>
             </div>
             <p className="text-xs text-muted-foreground">
               &copy; 2026 SpendWise. All rights reserved.

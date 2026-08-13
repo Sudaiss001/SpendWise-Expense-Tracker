@@ -27,13 +27,8 @@ export default function TopBar({ onAddExpense }: TopBarProps) {
   const [showExportMenu, setShowExportMenu] = useState(false);
 
   const handleLogout = async () => {
-    try {
-      await logout();
-    } catch (error) {
-      console.error('Failed to log out:', error);
-    } finally {
-      router.push('/login');
-    }
+    await logout();
+    window.location.href = '/login';
   };
 
   const handleExportCSV = () => {

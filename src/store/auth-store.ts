@@ -150,7 +150,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     });
 
     if (typeof window !== 'undefined') {
-      window.location.href = new URL('/login', window.location.origin).href;
+      window.location.href = '/login';
     }
   },
 

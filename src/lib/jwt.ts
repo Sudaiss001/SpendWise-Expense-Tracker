@@ -36,14 +36,18 @@ export async function setAuthCookie(payload: JwtPayload) {
 
 export async function removeAuthCookie() {
   const cookieStore = await cookies()
-  cookieStore.set(COOKIE_NAME, '', {
+  const expiredOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    sameSite: 'lax' as const,
     path: '/',
     maxAge: 0,
     expires: new Date(0),
-  })
+  }
+  cookieStore.set(COOKIE_NAME, '', expiredOptions)
+  cookieStore.set('token', '', expiredOptions)
+  cookieStore.delete(COOKIE_NAME)
+  cookieStore.delete('token')
 }
 
 export async function getAuthUser(): Promise<JwtPayload | null> {

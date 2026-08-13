@@ -4,7 +4,18 @@ import { removeAuthCookie } from '@/lib/jwt'
 export async function POST() {
   try {
     await removeAuthCookie()
-    return NextResponse.json({ message: 'Logged out successfully' })
+    const response = NextResponse.json({ message: 'Logged out successfully' })
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' as const,
+      path: '/',
+      maxAge: 0,
+      expires: new Date(0),
+    }
+    response.cookies.set('auth_token', '', cookieOptions)
+    response.cookies.set('token', '', cookieOptions)
+    return response
   } catch (error) {
     return NextResponse.json({ error: 'Failed to logout' }, { status: 500 })
   }

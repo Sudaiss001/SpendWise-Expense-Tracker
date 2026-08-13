@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
-import nodemailer from 'nodemailer'
+import { Resend } from 'resend'
 import { prisma } from '@/lib/prisma'
+
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function POST(req: Request) {
   try {
@@ -41,21 +43,11 @@ export async function POST(req: Request) {
       },
     })
 
-    // Configure Nodemailer transporter using process.env variables
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: parseInt(process.env.SMTP_PORT || '587', 10),
-      secure: process.env.SMTP_PORT === '465',
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    })
-
-    const mailOptions = {
-      from: process.env.EMAIL_FROM || '"SpendWise Support" <no-reply@spendwise.app>',
-      to: normalizedEmail,
-      subject: 'SpendWise - Your Password Reset OTP Code',
+    // Send email via Resend
+    const { data, error } = await resend.emails.send({
+      from: process.env.EMAIL_FROM || 'SpendWise <onboarding@resend.dev>',
+      to: [normalizedEmail],
+      subject: 'SpendWise - Password Reset OTP',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background-color: #0f172a; color: #ffffff; border-radius: 12px;">
           <h2 style="color: #8b5cf6; margin-bottom: 8px;">SpendWise Password Reset</h2>
@@ -70,20 +62,20 @@ export async function POST(req: Request) {
           </p>
         </div>
       `,
-    }
-
-    try {
-      await transporter.sendMail(mailOptions)
-    } catch (mailError) {
-      console.error('Failed to send OTP email via SMTP:', mailError)
-      // Log for local dev / testing if SMTP environment variables are not configured yet
-      console.log(`[DEV OTP FALLBACK] OTP for ${normalizedEmail}: ${otp}`)
-    }
-
-    return NextResponse.json({
-      message: 'OTP code sent to email successfully',
-      email: normalizedEmail,
     })
+
+    if (error) {
+      console.error('Resend delivery failed:', error)
+      return NextResponse.json(
+        { error: 'Failed to send OTP email' },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json(
+      { message: 'OTP code sent to email successfully' },
+      { status: 200 }
+    )
   } catch (error) {
     console.error('Forgot password error:', error)
     return NextResponse.json(

@@ -91,10 +91,10 @@ export default function ForgotPasswordPage() {
         <div className="mb-6">
           <Link
             href="/login"
-            className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors"
+            className="relative z-50 inline-flex items-center gap-2 text-sm text-slate-300 hover:text-white transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Login
+            <span>Back to Login</span>
           </Link>
         </div>
 

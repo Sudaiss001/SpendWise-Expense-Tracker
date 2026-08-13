@@ -49,10 +49,10 @@ export default function SignupPage() {
           <div>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors"
+              className="relative z-50 inline-flex items-center gap-2 text-sm text-slate-300 hover:text-white transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
-              Back to Home
+              <span>Back to Home</span>
             </Link>
           </div>
 
@@ -89,10 +89,10 @@ export default function SignupPage() {
           <div className="lg:hidden mb-6">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors"
+              className="relative z-50 inline-flex items-center gap-2 text-sm text-slate-300 hover:text-white transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
-              Back to Home
+              <span>Back to Home</span>
             </Link>
           </div>
 

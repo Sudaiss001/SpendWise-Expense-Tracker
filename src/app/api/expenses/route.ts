@@ -2,9 +2,11 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
 const CATEGORY_COLORS: Record<string, string> = {
+  Food: '#F97316',
   Inventory: '#14B8A6',
   Logistics: '#F59E0B',
   Utilities: '#3B82F6',
+  Salary: '#10B981',
   Salaries: '#10B981',
   Marketing: '#F43F5E',
   Rent: '#EC4899',

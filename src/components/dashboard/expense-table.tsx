@@ -38,10 +38,12 @@ const PAYMENT_METHODS: PaymentMethod[] = [
 ];
 
 const CATEGORY_COLORS: Record<string, string> = {
+  'Food': 'bg-orange-500/15 text-orange-400',
   'Office Supplies': 'bg-violet/15 text-violet-400',
   'Utilities': 'bg-blue-500/15 text-blue-400',
   'Transport': 'bg-amber-400/15 text-amber-400',
   'Marketing': 'bg-crimson/15 text-crimson',
+  'Salary': 'bg-emerald/15 text-emerald',
   'Salaries': 'bg-emerald/15 text-emerald',
   'Software': 'bg-indigo-500/15 text-indigo-400',
   'Rent': 'bg-pink-500/15 text-pink-400',

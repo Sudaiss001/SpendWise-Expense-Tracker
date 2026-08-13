@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { removeAuthCookie } from '@/lib/jwt'
 
+const AUTH_COOKIE_NAMES = ['auth_token', 'token']
+
 export async function POST() {
   try {
     await removeAuthCookie()
@@ -13,8 +15,9 @@ export async function POST() {
       maxAge: 0,
       expires: new Date(0),
     }
-    response.cookies.set('auth_token', '', cookieOptions)
-    response.cookies.set('token', '', cookieOptions)
+    AUTH_COOKIE_NAMES.forEach((cookieName) => {
+      response.cookies.set(cookieName, '', cookieOptions)
+    })
     return response
   } catch (error) {
     return NextResponse.json({ error: 'Failed to logout' }, { status: 500 })

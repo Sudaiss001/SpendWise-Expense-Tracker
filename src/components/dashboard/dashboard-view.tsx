@@ -13,8 +13,13 @@ import { useExpenseStore } from '@/store/expense-store';
 export default function DashboardView() {
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
   const fetchExpenses = useExpenseStore((state) => state.fetchExpenses);
+  const expenses = useExpenseStore((state) => state.expenses);
+  const isLoadingExpenses = useExpenseStore((state) => state.isLoading);
+  const expenseError = useExpenseStore((state) => state.error);
   const user = useAuthStore((state) => state.user);
+  const isAuthLoading = useAuthStore((state) => state.isLoading);
   const checkAuth = useAuthStore((state) => state.checkAuth);
+  const hasExpenses = expenses.length > 0;
 
   useEffect(() => {
     async function init() {
@@ -48,6 +53,22 @@ export default function DashboardView() {
         </motion.div>
 
         <MetricCards />
+        {!isAuthLoading && !isLoadingExpenses && !expenseError && !hasExpenses && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35 }}
+            className="glass rounded-xl p-6 sm:p-8 border border-emerald/20"
+          >
+            <h3 className="text-lg font-semibold text-white">
+              Welcome! Add your first expense to get started.
+            </h3>
+            <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
+              Your dashboard is ready. Once you record an expense, your trends,
+              category breakdown, and transaction history will appear here.
+            </p>
+          </motion.div>
+        )}
         <DashboardCharts />
         <ExpenseTable />
       </main>

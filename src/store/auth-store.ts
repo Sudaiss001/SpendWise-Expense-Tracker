@@ -148,10 +148,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       currentView: 'auth',
       authMode: 'login',
     });
-
-    if (typeof window !== 'undefined') {
-      window.location.href = '/login';
-    }
   },
 
   setView: (view: AppView) => {

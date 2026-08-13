@@ -11,7 +11,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/auth-store';
 import { useExpenseStore } from '@/store/expense-store';
 
@@ -20,7 +19,6 @@ interface TopBarProps {
 }
 
 export default function TopBar({ onAddExpense }: TopBarProps) {
-  const router = useRouter();
   const { user, logout } = useAuthStore();
   const exportCSV = useExpenseStore((s) => s.exportCSV);
   const exportPDFData = useExpenseStore((s) => s.exportPDFData);
@@ -28,6 +26,7 @@ export default function TopBar({ onAddExpense }: TopBarProps) {
 
   const handleLogout = async () => {
     await logout();
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
     window.location.href = '/login';
   };
 

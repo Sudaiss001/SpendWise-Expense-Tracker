@@ -4,12 +4,14 @@ import { prisma } from '@/lib/prisma'
 import { setAuthCookie } from '@/lib/jwt'
 
 const DEFAULT_CATEGORIES = [
+  { name: 'Food', color: '#F97316' },
+  { name: 'Rent', color: '#EC4899' },
+  { name: 'Utilities', color: '#3B82F6' },
+  { name: 'Salary', color: '#10B981' },
   { name: 'Inventory', color: '#14B8A6' },
   { name: 'Logistics', color: '#F59E0B' },
-  { name: 'Utilities', color: '#3B82F6' },
   { name: 'Salaries', color: '#10B981' },
   { name: 'Marketing', color: '#F43F5E' },
-  { name: 'Rent', color: '#EC4899' },
   { name: 'Equipment', color: '#6366F1' },
   { name: 'Software', color: '#8B5CF6' },
   { name: 'Taxes', color: '#EF4444' },

@@ -6,16 +6,16 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function POST(req: Request) {
   try {
-    const { email } = await req.json()
+    const { email: requestedEmail } = await req.json()
 
-    if (!email) {
+    if (!requestedEmail) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 })
     }
 
-    const normalizedEmail = email.trim().toLowerCase()
+    const email = requestedEmail.trim().toLowerCase()
 
     const user = await prisma.user.findUnique({
-      where: { email: normalizedEmail },
+      where: { email },
     })
 
     if (!user) {
@@ -31,13 +31,13 @@ export async function POST(req: Request) {
 
     // Clear any previous reset requests for this email
     await prisma.passwordReset.deleteMany({
-      where: { email: normalizedEmail },
+      where: { email },
     })
 
     // Save OTP and expiration in PasswordReset table
     await prisma.passwordReset.create({
       data: {
-        email: normalizedEmail,
+        email,
         token: otp,
         expiresAt,
       },
@@ -46,30 +46,23 @@ export async function POST(req: Request) {
     // Send email via Resend
     const { data, error } = await resend.emails.send({
       from: process.env.EMAIL_FROM || 'SpendWise <onboarding@resend.dev>',
-      to: [normalizedEmail],
-      subject: 'SpendWise - Password Reset OTP',
+      to: [email],
+      subject: 'SpendWise Security - Password Reset OTP',
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background-color: #0f172a; color: #ffffff; border-radius: 12px;">
-          <h2 style="color: #8b5cf6; margin-bottom: 8px;">SpendWise Password Reset</h2>
-          <p style="color: #94a3b8; font-size: 15px; margin-bottom: 24px;">
-            Hello ${user.name || 'there'}, you requested a password reset for your SpendWise account. Use the 6-digit OTP code below to reset your password:
-          </p>
-          <div style="background-color: #1e293b; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 24px;">
-            <span style="font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #10b981;">${otp}</span>
+        <div style="font-family: sans-serif; padding: 24px; background-color: #0f172a; color: #ffffff; border-radius: 12px; max-width: 500px; margin: 0 auto;">
+          <h2 style="color: #a855f7; margin-top: 0;">SpendWise Security</h2>
+          <p style="color: #cbd5e1; font-size: 16px;">You requested a password reset for your SpendWise account.</p>
+          <div style="background-color: #1e293b; padding: 16px; border-radius: 8px; text-align: center; margin: 20px 0;">
+            <span style="font-size: 36px; font-weight: bold; letter-spacing: 6px; color: #a855f7;">${otp}</span>
           </div>
-          <p style="font-size: 13px; color: #64748b; margin-bottom: 0;">
-            This OTP is valid for 15 minutes. If you did not request this password reset, please ignore this email.
-          </p>
+          <p style="color: #94a3b8; font-size: 14px;">This code will expire in 15 minutes. If you did not request this, please ignore this email.</p>
         </div>
       `,
     })
 
     if (error) {
-      console.error('Resend delivery failed:', error)
-      return NextResponse.json(
-        { error: 'Failed to send OTP email' },
-        { status: 500 }
-      )
+      console.error("Resend API Error:", error)
+      return NextResponse.json({ error: error.message }, { status: 400 })
     }
 
     return NextResponse.json(
